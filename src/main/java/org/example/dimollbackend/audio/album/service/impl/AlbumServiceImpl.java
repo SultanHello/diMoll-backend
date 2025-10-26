@@ -16,6 +16,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AlbumServiceImpl implements AlbumService {
+
     private final AlbumRepository albumRepository;
     private final ArtistService artistService;
     @Override

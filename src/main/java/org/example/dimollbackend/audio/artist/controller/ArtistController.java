@@ -16,8 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArtistController {
     private final ArtistService artistService;
-
-
     @GetMapping()
     public List<Artist> artists(){
         return artistService.getArtists();

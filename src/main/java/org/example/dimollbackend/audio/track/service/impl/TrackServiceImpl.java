@@ -29,6 +29,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
@@ -48,6 +50,8 @@ public class TrackServiceImpl implements TrackService {
     private final S3Properties s3Properties;
     private final TrackMapper trackMapper;
     private final S3Service s3Service;
+    private final S3Client s3Client;
+
 
 
 
@@ -83,6 +87,8 @@ public class TrackServiceImpl implements TrackService {
 
 
 
+
+
     public ResponseEntity<Resource> streamTrackById(Long id, String rangeHeader) {
         String key = getKeyById(id);
         return s3Service.streamAudio(key, rangeHeader);
@@ -91,8 +97,12 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public TrackResponseDto deleteTrackById(Long trackId) {
         Track track = trackRepository.findById(trackId).orElse(null);
+        deleteCloudTrack(track);
         trackRepository.deleteById(trackId);
+        return getTrackResponseDto(track);
+    }
 
+    private static TrackResponseDto getTrackResponseDto(Track track) {
         return TrackResponseDto.builder()
                 .title(track.getTitle())
                 .id(track.getId())
@@ -101,10 +111,20 @@ public class TrackServiceImpl implements TrackService {
                 .build();
     }
 
+    private void deleteCloudTrack(Track track) {
+        DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                .bucket(s3Properties.getBucket())
+                .key(track.getS3key())
+                .build();
+        s3Client.deleteObject(deleteRequest);
+    }
+
+
+
+
     private String getKeyById(Long id){
         return trackRepository.findById(id).orElseThrow(null).getS3key();
     }
-
 
     @Override
     public MusicResponseDto findTrack(Long trackId) {
