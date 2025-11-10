@@ -24,8 +24,9 @@ public class ArtistController {
     public ResponseEntity<Artist> create(@RequestBody CreateArtistDto createArtistDto){
         return ResponseEntity.ok(artistService.createArtist(createArtistDto));
     }
-
-
-
+    @DeleteMapping("/{artistId}/delete")
+    public ResponseEntity<String> delete(@PathVariable Long artistId){
+        return ResponseEntity.ok(artistService.deleteArtist(artistId));
+    }
 
 }

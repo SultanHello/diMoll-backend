@@ -14,4 +14,6 @@ public interface ArtistService {
     public void saveArtist(Artist artist);
     public List<Artist> getArtists();
     Artist findArtistById(Long id);
+
+    String deleteArtist(Long artistId);
 }

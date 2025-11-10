@@ -1,0 +1,29 @@
+services:
+  postgres-db:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=dimoll'
+      - 'POSTGRES_PASSWORD=Zxcvbnm'
+      - 'POSTGRES_USER=postgres'
+    ports:
+      - '5433:5432'
+
+
+
+  dimoll-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9235:1930"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/dimoll
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Zxcvbnm
+    depends_on:
+      - postgres-db
+
+networks:
+  crud-network:
+
+

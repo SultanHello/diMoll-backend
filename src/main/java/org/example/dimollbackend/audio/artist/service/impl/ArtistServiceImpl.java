@@ -1,11 +1,17 @@
 package org.example.dimollbackend.audio.artist.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.example.dimollbackend.audio.album.model.Album;
+import org.example.dimollbackend.audio.album.repository.AlbumRepository;
+import org.example.dimollbackend.audio.album.service.AlbumService;
 import org.example.dimollbackend.audio.artist.model.Artist;
 import org.example.dimollbackend.audio.artist.repository.ArtistRepository;
 import org.example.dimollbackend.audio.artist.service.ArtistService;
+import org.example.dimollbackend.audio.track.repository.TrackRepository;
+import org.example.dimollbackend.audio.track.service.TrackService;
 import org.example.dimollbackend.dto.request.CreateArtistDto;
 
+import org.example.dimollbackend.dto.response.TrackResponseDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArtistServiceImpl implements ArtistService {
     private final ArtistRepository artistRepository;
+
+
 
     @Override
     public Artist createArtist(CreateArtistDto createArtistDto) {
@@ -44,4 +52,13 @@ public class ArtistServiceImpl implements ArtistService {
     public Artist findArtistById(Long id) {
         return artistRepository.findById(id).orElseThrow(null);
     }
+
+
+
+    @Override
+    public String deleteArtist(Long artistId) {
+        artistRepository.deleteById(artistId);
+        return "deleted artist";
+    }
+
 }

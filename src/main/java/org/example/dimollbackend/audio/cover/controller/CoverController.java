@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class CoverController {
     }
 
     @DeleteMapping("/{coverId}/delete")
-    public ResponseEntity<String> deleteTrack(@RequestParam Long coverId,@AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<String> deleteCover(@RequestParam Long coverId,@AuthenticationPrincipal UserDetails userDetails){
         coverService.deleteCoverById(coverId,userDetails.getUsername());
         return ResponseEntity.ok("cover success deleted");
     }
@@ -63,5 +64,8 @@ public class CoverController {
     public ResponseEntity<Resource> streamTrack(@PathVariable Long id, @RequestHeader(value = "Range", required = false) String rangeHeader) {
         return coverService.streamCoverById(id, rangeHeader);
     }
+
+
+
 
 }

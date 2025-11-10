@@ -72,7 +72,9 @@ public class CoverServiceImpl implements CoverService {
     }
     @Override
     public CoverResponseDto putLikeCover(Long coverId, String username) {
+
         Cover cover = coverRepository.findById(coverId).orElseThrow();
+        emailNotificationService.sendNewLikeEmail(cover.getUser().getEmail(),username);
         User user = userService.findByUsername(username);
         user.getLiked().add(cover);
 
@@ -110,17 +112,7 @@ public class CoverServiceImpl implements CoverService {
         return coverRepository.save(cover);
     }
 
-//    public Resource getTrackResource(Long trackId) {
-//        Cover cover = coverRepository.findById(trackId)
-//                .orElseThrow(() -> new RuntimeException("Трек не найден"));
-//
-//        try {
-//            File file = new File(cover.getAudioUrl());
-//            return new FileSystemResource(file);
-//        } catch (Exception e) {
-//            throw new RuntimeException("Не удалось загрузить файл", e);
-//        }
-//    }
+
 
     @Override
     public List<Cover> getAllCovers() {

@@ -97,7 +97,7 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public TrackResponseDto deleteTrackById(Long trackId) {
         Track track = trackRepository.findById(trackId).orElse(null);
-        deleteCloudTrack(track);
+        this.deleteCloudTrack(track);
         trackRepository.deleteById(trackId);
         return getTrackResponseDto(track);
     }

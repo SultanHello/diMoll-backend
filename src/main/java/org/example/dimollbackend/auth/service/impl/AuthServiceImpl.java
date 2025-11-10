@@ -98,6 +98,7 @@ public class AuthServiceImpl implements AuthService {
         return User.builder()
                 .username(registerRequestDto.getUsername())
                 .password(passwordEncoder.encode(registerRequestDto.getPassword()))
+                .userRole(registerRequestDto.getUserRole())
                 .build();
 
 

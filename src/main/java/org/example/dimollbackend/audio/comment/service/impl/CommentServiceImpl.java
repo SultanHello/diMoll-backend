@@ -5,10 +5,13 @@ import org.example.dimollbackend.audio.comment.model.Comment;
 import org.example.dimollbackend.audio.comment.repository.CommentRepository;
 import org.example.dimollbackend.audio.comment.service.CommentService;
 
+import org.example.dimollbackend.audio.cover.model.Cover;
 import org.example.dimollbackend.audio.cover.service.CoverService;
 import org.example.dimollbackend.dto.request.CommentRequestDto;
 import org.example.dimollbackend.dto.response.CommentResponseDto;
 
+import org.example.dimollbackend.notification.email.service.EmailNotificationService;
+import org.example.dimollbackend.user.entity.User;
 import org.example.dimollbackend.user.service.UserService;
 import org.springframework.stereotype.Service;
 
@@ -23,15 +26,16 @@ public class CommentServiceImpl implements CommentService {
     private final CoverService coverService;
     private final UserService userService;
     private final CommentLikeService commentLikeService;
+    private final EmailNotificationService emailNotificationService;
     @Override
     public CommentResponseDto createComment(String username, CommentRequestDto commentRequestDto) {
-        System.out.println(userService.findByUsername(username).getUsername());
+        Cover cover = coverService.findCoverById(commentRequestDto.getCoverId());
         Comment comment = Comment.builder()
-                .owner(coverService.findCoverById(commentRequestDto.getCoverId()))
+                .owner(cover)
                 .text(commentRequestDto.getText())
                 .writer(userService.findByUsername(username))
                 .build();
-        System.out.println(comment.getWriter());
+        emailNotificationService.sendNewLikeEmail(cover.getUser().getEmail(),comment.getWriter().getEmail());
         commentRepository.save(comment);
         return CommentResponseDto.builder()
                 .text(comment.getText())
@@ -42,10 +46,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentResponseDto putLike(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(null);
-        ;
+
         comment.setLikes(commentLikeService.getLikesCount(commentId));
         commentRepository.save(comment);
-        System.out.println(comment.getWriter());
+
 
         return CommentResponseDto.builder()
                 .id(comment.getId())
@@ -55,23 +59,6 @@ public class CommentServiceImpl implements CommentService {
 
                 .build();
     }
-
-
-//    return trackRepository.findAll(pageable)
-//            .map(track -> TrackResponseDto.builder()
-//            .id(track.getId())
-//            .title(track.getTitle())
-//            .genre(track.getGenre())
-//            .year(track.getYear())
-//            .albumName(track.getAlbum() != null ? track.getAlbum().getAlbumName() : null)
-//            .authorName(track.getAlbum() != null && track.getAlbum().getArtist() != null
-//            ? track.getAlbum().getArtist().getArtistName() : null)
-//            .coverTitles(track.getCovers() != null
-//            ? track.getCovers().stream()
-//                                .map(Cover::getTitle)   // вытаскиваем title из каждого Cover
-//                                .collect(Collectors.toList())
-//            : Collections.emptyList())
-//            .build());
 
     @Override
     public List<CommentResponseDto> getAllComments() {

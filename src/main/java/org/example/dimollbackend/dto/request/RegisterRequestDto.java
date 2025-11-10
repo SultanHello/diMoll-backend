@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.dimollbackend.enums.UserRole;
 
 @Getter
 @Setter
@@ -11,6 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class RegisterRequestDto {
     private String username;
+    private UserRole userRole;
     private String email;
     private String password;
 }

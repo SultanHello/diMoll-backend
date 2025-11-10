@@ -16,9 +16,15 @@ public class EmailNotificationService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("🎶 Новый трек от " + artistName);
-        message.setText("Музыкант " + artistName + " выложил новый трек: \"" + trackTitle + "\"\n\nПослушать можно на сайте 🎧");
+        message.setText("Музыкант " + artistName + " выложил новый трек: \"" + trackTitle + "\"\n\nПослушать можно на сайте ");
         mailSender.send(message);
     }
+    public void sendNewLikeEmail(String to, String subscriber){
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subscriber+" liked your cover");
+        message.setText(subscriber+" liked your cover)))))))))))))");
+
+    }
+
 }
-//constanse
-//universal

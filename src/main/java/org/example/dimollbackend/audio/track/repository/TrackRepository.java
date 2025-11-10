@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface TrackRepository extends JpaRepository<Track,Long> {
     public Optional<Track> findById(Long trackId);
+    void deleteTrackByAlbum_Id(Long id);
 
 
 }

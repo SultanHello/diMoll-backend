@@ -17,4 +17,8 @@ public interface AlbumService {
     String createAlbum(CreateAlbumDto createAlbumDto);
     public void saveAlbum(Album album);
     public List<Album> allAlbums();
+
+    String deleteAlbum(Long albumId);
+
+//    void deleteByArtistId(List<Long> listOfAlbumId);
 }
