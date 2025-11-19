@@ -1,14 +1,17 @@
 package org.example.dimollbackend.audio.track.repository;
 
+import org.example.dimollbackend.audio.album.model.Album;
 import org.example.dimollbackend.audio.track.model.Track;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TrackRepository extends JpaRepository<Track,Long> {
     public Optional<Track> findById(Long trackId);
     void deleteTrackByAlbum_Id(Long id);
+    List<Track> findByTitleStartingWith(String text);
 
 
 }

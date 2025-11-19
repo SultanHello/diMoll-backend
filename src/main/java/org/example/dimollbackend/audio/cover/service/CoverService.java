@@ -3,6 +3,7 @@ package org.example.dimollbackend.audio.cover.service;
 
 import org.example.dimollbackend.audio.cover.model.Cover;
 import org.example.dimollbackend.audio.metadata.CoverMetadata;
+import org.example.dimollbackend.dto.request.CoverRequestDto;
 import org.example.dimollbackend.dto.response.CoverResponseDto;
 import org.example.dimollbackend.dto.response.TrackResponseDto;
 import org.springframework.core.io.Resource;
@@ -29,6 +30,8 @@ public interface CoverService {
     ResponseEntity<Resource> streamCoverById(Long id, String rangeHeader);
 
     void deleteCoverById(Long coverId,String username);
+
+    List<CoverRequestDto> searchCover(String text);
 
 
     //CoverResponseDto putLike(Long coverId, String username);

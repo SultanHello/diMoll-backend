@@ -4,6 +4,7 @@ package org.example.dimollbackend.audio.album.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.dimollbackend.audio.album.model.Album;
 import org.example.dimollbackend.audio.album.service.AlbumService;
+import org.example.dimollbackend.dto.request.AlbumRequestDto;
 import org.example.dimollbackend.dto.request.CreateAlbumDto;
 
 import org.springframework.http.ResponseEntity;
@@ -30,4 +31,11 @@ public class AlbumController {
     public ResponseEntity<String> delete(@PathVariable Long albumId){
         return ResponseEntity.ok(albumService.deleteAlbum(albumId));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<AlbumRequestDto>> search(@RequestParam String text){
+        return ResponseEntity.ok(albumService.searchAlbum(text));
+
+    }
+
 }

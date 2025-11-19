@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dimollbackend.audio.cover.model.Cover;
 
+import org.example.dimollbackend.dto.request.TrackRequestDto;
 import org.example.dimollbackend.file.config.properties.S3Properties;
 import org.example.dimollbackend.file.exception.FileStorageException;
 import org.example.dimollbackend.file.service.S3Service;
@@ -38,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -100,6 +102,18 @@ public class TrackServiceImpl implements TrackService {
         this.deleteCloudTrack(track);
         trackRepository.deleteById(trackId);
         return getTrackResponseDto(track);
+    }
+
+    @Override
+    public List<TrackRequestDto> searchTrack(String text) {
+        return trackRepository.findByTitleStartingWith(text).stream()
+                .map(track -> TrackRequestDto.builder()
+                        .id(track.getId())
+                        .title(track.getTitle())
+                        .year(track.getYear())
+                        .genre(track.getGenre())
+                        .build()
+                ).toList();
     }
 
     private static TrackResponseDto getTrackResponseDto(Track track) {

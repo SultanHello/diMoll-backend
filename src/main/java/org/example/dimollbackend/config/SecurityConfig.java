@@ -23,7 +23,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth->auth.requestMatchers("/auth/register","/auth/signIn").permitAll()
+                .authorizeHttpRequests(auth->auth.requestMatchers("/auth/register","/auth/signIn","/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers( "/audio/albums/create","/audio/tracks/upload","/audio/artists/create","/audio/tracks/*/delete").hasRole("ADMIN")
 
                         .anyRequest().authenticated())
@@ -37,6 +37,7 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public AuthenticationManager manager(AuthenticationConfiguration configuration) throws Exception{
         return configuration.getAuthenticationManager();

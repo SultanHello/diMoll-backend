@@ -11,6 +11,7 @@ import org.example.dimollbackend.audio.metadata.CoverMetadata;
 
 import org.example.dimollbackend.audio.track.service.TrackService;
 
+import org.example.dimollbackend.dto.request.CoverRequestDto;
 import org.example.dimollbackend.dto.response.CoverResponseDto;
 import org.example.dimollbackend.exeption.NotFoundException;
 import org.example.dimollbackend.file.config.properties.S3Properties;
@@ -23,8 +24,10 @@ import org.example.dimollbackend.user.entity.User;
 import org.example.dimollbackend.user.repository.UserRepository;
 import org.example.dimollbackend.user.service.UserService;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.Resource;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +50,7 @@ public class CoverServiceImpl implements CoverService {
     private final CoverMapper coverMapper;
     private final UserRepository userRepository;
     private final EmailNotificationService emailNotificationService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public CoverResponseDto uploadCover(MultipartFile file, CoverMetadata metadata,String username) {
@@ -116,7 +120,18 @@ public class CoverServiceImpl implements CoverService {
 
     @Override
     public List<Cover> getAllCovers() {
-        return coverRepository.findAll();
+        List<Cover> covers = (List<Cover>) redisTemplate.opsForValue().get("all_covers");
+        if (covers != null) {
+            System.out.println(">>> Returning covers from Redis");
+            return covers;
+        }
+        covers = coverRepository.findAll();
+        System.out.println(">>> Returning covers from DB");
+
+
+        redisTemplate.opsForValue().set("all_covers", covers);
+
+        return covers;
     }
 
     @Override
@@ -137,6 +152,17 @@ public class CoverServiceImpl implements CoverService {
         }else {
             throw new NotFoundException();
         }
+    }
+
+    @Override
+    public List<CoverRequestDto> searchCover(String text) {
+        return coverRepository.findByTitleStartingWith(text).stream().map(cover -> CoverRequestDto.builder()
+                .id(cover.getId())
+                .trackName(cover.getTrack().getTitle())
+                .title(cover.getTitle())
+                .creater(cover.getUser().getUsername())
+                .build()
+        ).toList();
     }
 
     private String getKeyById(Long id){

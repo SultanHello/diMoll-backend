@@ -7,6 +7,8 @@ import org.example.dimollbackend.audio.comment.repository.CommentRepository;
 import org.example.dimollbackend.audio.cover.model.Cover;
 import org.example.dimollbackend.audio.cover.service.CoverService;
 import org.example.dimollbackend.audio.metadata.CoverMetadata;
+import org.example.dimollbackend.dto.request.AlbumRequestDto;
+import org.example.dimollbackend.dto.request.CoverRequestDto;
 import org.example.dimollbackend.dto.response.CommentResponseDto;
 import org.example.dimollbackend.dto.response.CoverResponseDto;
 import org.example.dimollbackend.dto.response.TrackResponseDto;
@@ -63,6 +65,12 @@ public class CoverController {
     @GetMapping("/{id}/stream")
     public ResponseEntity<Resource> streamTrack(@PathVariable Long id, @RequestHeader(value = "Range", required = false) String rangeHeader) {
         return coverService.streamCoverById(id, rangeHeader);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CoverRequestDto>> search(@RequestParam String text){
+        return ResponseEntity.ok(coverService.searchCover(text));
+
     }
 
 

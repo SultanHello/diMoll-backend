@@ -1,25 +1,20 @@
 package org.example.dimollbackend.audio.track.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.dimollbackend.dto.request.TrackRequestDto;
 import org.springframework.core.io.Resource;
 import lombok.RequiredArgsConstructor;
 import org.example.dimollbackend.audio.metadata.TrackMetadata;
-import org.example.dimollbackend.audio.track.model.Track;
 import org.example.dimollbackend.audio.track.service.TrackService;
 import org.example.dimollbackend.dto.response.MusicResponseDto;
 import org.example.dimollbackend.dto.response.TrackResponseDto;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -64,5 +59,11 @@ public class TrackController {
     @GetMapping("/{id}/stream")
     public ResponseEntity<Resource> streamTrack(@PathVariable Long id, @RequestHeader(value = "Range", required = false) String rangeHeader) {
         return trackService.streamTrackById(id, rangeHeader);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<TrackRequestDto>> search(@RequestParam String text){
+        return ResponseEntity.ok(trackService.searchTrack(text));
+
     }
 }

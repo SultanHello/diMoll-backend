@@ -1,20 +1,18 @@
 package org.example.dimollbackend.audio.artist.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.dimollbackend.audio.album.model.Album;
-import org.example.dimollbackend.audio.album.repository.AlbumRepository;
-import org.example.dimollbackend.audio.album.service.AlbumService;
 import org.example.dimollbackend.audio.artist.model.Artist;
 import org.example.dimollbackend.audio.artist.repository.ArtistRepository;
 import org.example.dimollbackend.audio.artist.service.ArtistService;
-import org.example.dimollbackend.audio.track.repository.TrackRepository;
-import org.example.dimollbackend.audio.track.service.TrackService;
+import org.example.dimollbackend.dto.request.ArtistRequestDto;
 import org.example.dimollbackend.dto.request.CreateArtistDto;
 
-import org.example.dimollbackend.dto.response.TrackResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.function.Function;
 
 
 @Service
@@ -44,8 +42,19 @@ public class ArtistServiceImpl implements ArtistService {
     }
 
     @Override
-    public List<Artist> getArtists() {
-        return artistRepository.findAll();
+    public Page<ArtistRequestDto> getArtists(Pageable pageable) {
+        Page<Artist> page = artistRepository.findAll(pageable);
+
+        // Преобразуем элементы, сохраняя страницу
+        return page.map(getArtistRequestDtoFunction());
+    }
+
+    private static Function<Artist, ArtistRequestDto> getArtistRequestDtoFunction() {
+        return artist -> ArtistRequestDto.builder()
+                .id(artist.getId())
+                .artistName(artist.getArtistName())
+                .artistAge(artist.getArtistAge())
+                .build();
     }
 
     @Override
@@ -59,6 +68,20 @@ public class ArtistServiceImpl implements ArtistService {
     public String deleteArtist(Long artistId) {
         artistRepository.deleteById(artistId);
         return "deleted artist";
+    }
+
+    @Override
+    public List<ArtistRequestDto> searchArtist(String text) {
+        return artistRepository.findByArtistNameStartingWith(text).stream()
+                .map(getArtistArtistRequestDtoFunction()).toList();
+    }
+
+    private static Function<Artist, ArtistRequestDto> getArtistArtistRequestDtoFunction() {
+        return artist -> ArtistRequestDto.builder()
+                .id(artist.getId())
+                .artistName(artist.getArtistName())
+                .artistAge(artist.getArtistAge())
+                .build();
     }
 
 }

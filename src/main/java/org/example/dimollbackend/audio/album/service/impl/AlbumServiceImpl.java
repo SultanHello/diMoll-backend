@@ -6,7 +6,9 @@ import org.example.dimollbackend.audio.album.repository.AlbumRepository;
 import org.example.dimollbackend.audio.album.service.AlbumService;
 import org.example.dimollbackend.audio.artist.service.ArtistService;
 import org.example.dimollbackend.audio.metadata.MusicMetadata;
+import org.example.dimollbackend.audio.track.model.Track;
 import org.example.dimollbackend.audio.track.service.TrackService;
+import org.example.dimollbackend.dto.request.AlbumRequestDto;
 import org.example.dimollbackend.dto.request.CreateAlbumDto;
 
 import org.springframework.stereotype.Service;
@@ -57,4 +59,14 @@ public class AlbumServiceImpl implements AlbumService {
         albumRepository.deleteById(albumId);
         return "deleted album";
     }
+
+    @Override
+    public List<AlbumRequestDto> searchAlbum(String text) {
+        return albumRepository.findByAlbumNameStartingWith(text).stream().map(alb->AlbumRequestDto.builder()
+                .id(alb.getId())
+                .albumName(alb.getAlbumName())
+                .artistName(alb.getArtist().getArtistName())
+                .build()).toList();
+    }
+
 }

@@ -2,6 +2,7 @@ package org.example.dimollbackend.audio.album.service;
 
 import org.example.dimollbackend.audio.album.model.Album;
 import org.example.dimollbackend.audio.metadata.MusicMetadata;
+import org.example.dimollbackend.dto.request.AlbumRequestDto;
 import org.example.dimollbackend.dto.request.CreateAlbumDto;
 
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ public interface AlbumService {
     public List<Album> allAlbums();
 
     String deleteAlbum(Long albumId);
+
+    List<AlbumRequestDto> searchAlbum(String text);
 
 //    void deleteByArtistId(List<Long> listOfAlbumId);
 }

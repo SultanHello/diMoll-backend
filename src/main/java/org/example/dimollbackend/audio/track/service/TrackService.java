@@ -1,6 +1,7 @@
 package org.example.dimollbackend.audio.track.service;
 
 
+import org.example.dimollbackend.dto.request.TrackRequestDto;
 import org.springframework.core.io.Resource;
 import org.example.dimollbackend.audio.metadata.TrackMetadata;
 import org.example.dimollbackend.audio.track.model.Track;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.File;
+import java.util.List;
 
 @Service
 public interface TrackService {
@@ -32,5 +34,7 @@ public interface TrackService {
     ResponseEntity<Resource> streamTrackById(Long id, String rangeHeader);
 
     TrackResponseDto deleteTrackById(Long trackId);
+
+    List<TrackRequestDto> searchTrack(String text);
 //    StreamingResponseBody streamTrackById(Long id);
 }
