@@ -44,9 +44,9 @@ docker-build:
 # 4️⃣ Deploy на сервер (SSH)
 deploy-prod:
   stage: deploy
+  image: alpine:3.18
   before_script:
-    - apt-get update -y
-    - apt-get install -y openssh-client
+    - apk add --no-cache openssh
   script:
     - scp -o StrictHostKeyChecking=no docker-compose.yml $SSH_USER@$SSH_HOST:/app/docker-compose.yml
     - ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST 'cd /app && docker compose pull && docker compose up -d --force-recreate'
