@@ -12,7 +12,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CommentLikeService {
-    
     private static final String KEY = "comment:%d:likes";
 
     private final UserService userService;

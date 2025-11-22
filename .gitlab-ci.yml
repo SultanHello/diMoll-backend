@@ -1,0 +1,69 @@
+image: maven:3.9.5-eclipse-temurin-17
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  REGISTRY: "$CI_REGISTRY"
+  IMAGE_NAME: "$CI_REGISTRY_IMAGE/app"
+  TAG: "$CI_COMMIT_SHORT_SHA"
+
+stages:
+  - build
+  - test
+  - docker
+  - deploy
+
+# --------------------------
+# 1️⃣ Сборка проекта
+# --------------------------
+
+build-job:
+  stage: build
+  script:
+    - mvn clean install -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar
+
+# --------------------------
+# 2️⃣ Тесты
+# --------------------------
+
+test-job:
+  stage: test
+  script:
+    - mvn test
+
+# --------------------------
+# 3️⃣ Docker build + push
+# --------------------------
+
+docker-build:
+  stage: docker
+  image: docker:24
+  services:
+    - docker:24-dind
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $REGISTRY
+    - docker build -t $IMAGE_NAME:$TAG .
+    - docker push $IMAGE_NAME:$TAG
+  only:
+    - main
+
+# --------------------------
+# 4️⃣ Deploy на сервер (SSH)
+# --------------------------
+
+deploy-prod:
+  stage: deploy
+  before_script:
+    - apk add --no-cache openssh
+  script:
+    - scp -o StrictHostKeyChecking=no docker-compose.yml $SSH_USER@$SSH_HOST:/app/docker-compose.yml
+    - ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "
+      cd /app &&
+      docker compose pull &&
+      docker compose up -d --force-recreate
+      "
+
+
