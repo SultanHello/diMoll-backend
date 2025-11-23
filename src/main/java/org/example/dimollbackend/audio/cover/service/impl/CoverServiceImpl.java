@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -50,6 +51,7 @@ public class CoverServiceImpl implements CoverService {
     private final CoverMapper coverMapper;
     private final UserRepository userRepository;
     private final EmailNotificationService emailNotificationService;
+
     private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
@@ -120,16 +122,18 @@ public class CoverServiceImpl implements CoverService {
 
     @Override
     public List<Cover> getAllCovers() {
-        List<Cover> covers = (List<Cover>) redisTemplate.opsForValue().get("all_covers");
+        String key = "covers:all";
+        List<Cover> covers = (List<Cover>) redisTemplate.opsForValue().get(key);
+
         if (covers != null) {
             System.out.println(">>> Returning covers from Redis");
             return covers;
         }
+
         covers = coverRepository.findAll();
         System.out.println(">>> Returning covers from DB");
 
-
-        redisTemplate.opsForValue().set("all_covers", covers);
+        redisTemplate.opsForValue().set(key, List.copyOf(covers), 10, TimeUnit.MINUTES);
 
         return covers;
     }

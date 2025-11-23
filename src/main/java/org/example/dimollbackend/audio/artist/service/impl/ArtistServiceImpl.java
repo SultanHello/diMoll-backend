@@ -9,6 +9,7 @@ import org.example.dimollbackend.dto.request.CreateArtistDto;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,8 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class ArtistServiceImpl implements ArtistService {
     private final ArtistRepository artistRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
+
 
 
 

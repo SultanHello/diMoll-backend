@@ -34,9 +34,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     @Override
     public AuthResponseDto register(RegisterRequestDto registerRequestDto, HttpServletResponse response) {
-        usersRepository.findAll().stream()
-                .map(User::getUsername)
-                .forEach(email -> isCorrectEmail(registerRequestDto, email));
+        checkUsernameIsUnique(registerRequestDto.getUsername());
 
         User user = userBuilder(registerRequestDto);
         usersRepository.save(user);
@@ -49,8 +47,17 @@ public class AuthServiceImpl implements AuthService {
         return buildAuthResponseDto(accessToken);
     }
 
-    private void isCorrectEmail(RegisterRequestDto dto, String email) {
-        if (dto.getEmail().equals(email)) {
+    private void checkUsernameIsUnique(String username) {
+        boolean exists = usersRepository.findAll().stream()
+                .anyMatch(user -> user.getUsername().equals(username));
+
+        if (exists) {
+            throw new ExistException("Пользователь с таким username уже существует");
+        }
+    }
+
+    private void isCorrectUsername(RegisterRequestDto dto, String username) {
+        if (dto.getEmail().equals(username)) {
             throw new ExistException("user is alredy excist");
         }
     }
