@@ -1,20 +1,26 @@
+version: '3.9'
+
 services:
   postgres-db:
-    image: 'postgres:latest'
+    image: postgres:latest
+    container_name: postgres-db
     environment:
-      - 'POSTGRES_DB=dimoll'
-      - 'POSTGRES_PASSWORD=Zxcvbnm'
-      - 'POSTGRES_USER=postgres'
+      POSTGRES_DB: dimoll
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Zxcvbnm
     ports:
-      - '5433:5432'
+      - "5433:5432"
+    networks:
+      - crud-network
+
   redis:
     image: redis:7
     container_name: redis
     ports:
       - "6379:6379"
-    command: [ "redis-server", "--appendonly", "yes" ]
-
-
+    command: ["redis-server", "--appendonly", "yes"]
+    networks:
+      - crud-network
 
   dimoll-backend:
     build:
@@ -22,14 +28,16 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9235:1930"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/dimoll
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: Zxcvbnm
+    env_file:
+      - .env
     depends_on:
       - postgres-db
+      - redis
+    networks:
+      - crud-network
 
 networks:
   crud-network:
+    driver: bridge
 
 
