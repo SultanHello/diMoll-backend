@@ -26,7 +26,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         
-        return http.csrf(AbstractHttpConfigurer::disable)
+        return http
+                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configure(http))
+                .csrf(AbstractHttpConfigurer::disable)
+
                 .authorizeHttpRequests(auth->auth.requestMatchers("/auth/register","/auth/signIn","/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers( "/audio/albums/create","/audio/tracks/upload","/audio/artists/create","/audio/tracks/*/delete").hasRole("ADMIN")
 
@@ -34,9 +37,12 @@ public class SecurityConfig {
                 .userDetailsService(customUserDetailsService)
                 .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .build();
 
     }
+
+
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -46,6 +52,9 @@ public class SecurityConfig {
     public AuthenticationManager manager(AuthenticationConfiguration configuration) throws Exception{
         return configuration.getAuthenticationManager();
     }
+
+
+
 
 
 }
