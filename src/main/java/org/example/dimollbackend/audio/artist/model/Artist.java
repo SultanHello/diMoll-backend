@@ -1,5 +1,6 @@
 package org.example.dimollbackend.audio.artist.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.dimollbackend.audio.album.model.Album;
@@ -29,6 +30,7 @@ public class Artist {
 
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
+    @JsonIgnore
     private List<Album> albums=new ArrayList<>();
 
 

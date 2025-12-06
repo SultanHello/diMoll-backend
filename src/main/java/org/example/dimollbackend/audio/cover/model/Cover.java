@@ -1,5 +1,6 @@
 package org.example.dimollbackend.audio.cover.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +28,7 @@ public class Cover {
     private String title;
 
     @ManyToMany(mappedBy = "liked")
+    @JsonIgnore
     private List<User> liked=new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -37,6 +39,7 @@ public class Cover {
     private Track track;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Comment> comment;
 
     private String s3key;

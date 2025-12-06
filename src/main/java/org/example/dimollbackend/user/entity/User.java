@@ -1,6 +1,7 @@
 package org.example.dimollbackend.user.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -48,10 +49,12 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "cover_id")
     )
+    @JsonIgnore
     private List<Cover> liked;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
+    @JsonIgnore
     private List<Cover> ownedCovers=new ArrayList<>();
 
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -64,9 +67,11 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "follower_id"), // кто подписывается
             inverseJoinColumns = @JoinColumn(name = "following_id") // на кого подписан
     )
+    @JsonIgnore
     private List<User> following = new ArrayList<>(); // мои подписки
 
     @ManyToMany(mappedBy = "following")
+    @JsonIgnore
     private List<User> followers = new ArrayList<>();
 
 
