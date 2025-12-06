@@ -27,7 +27,6 @@ import org.example.dimollbackend.user.service.UserService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.Resource;
 
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +51,7 @@ public class CoverServiceImpl implements CoverService {
     private final UserRepository userRepository;
     private final EmailNotificationService emailNotificationService;
 
-    private final RedisTemplate<String, Object> redisTemplate;
+
 
     @Override
     public CoverResponseDto uploadCover(MultipartFile file, CoverMetadata metadata,String username) {
@@ -122,20 +121,7 @@ public class CoverServiceImpl implements CoverService {
 
     @Override
     public List<Cover> getAllCovers() {
-        String key = "covers:all";
-        List<Cover> covers = (List<Cover>) redisTemplate.opsForValue().get(key);
-
-        if (covers != null) {
-            System.out.println(">>> Returning covers from Redis");
-            return covers;
-        }
-
-        covers = coverRepository.findAll();
-        System.out.println(">>> Returning covers from DB");
-
-        redisTemplate.opsForValue().set(key, List.copyOf(covers), 10, TimeUnit.MINUTES);
-
-        return covers;
+        return coverRepository.findAll();
     }
 
     @Override
