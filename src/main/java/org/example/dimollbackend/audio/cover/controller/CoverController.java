@@ -46,8 +46,8 @@ public class CoverController {
             @AuthenticationPrincipal UserDetails userDetails
     ) throws Exception {
         CoverMetadata metadata = objectMapper.readValue(metadataJson, CoverMetadata.class);
-        coverService.uploadCover(file, metadata,userDetails.getUsername());
-        return ResponseEntity.ok(coverService.uploadCover(file, metadata,userDetails.getUsername()));
+        CoverResponseDto coverResponseDto = coverService.uploadCover(file, metadata,userDetails.getUsername());
+        return ResponseEntity.ok(coverResponseDto);
     }
 
     @DeleteMapping("/{coverId}/delete")
