@@ -31,6 +31,15 @@ public class CommentController {
     public ResponseEntity<List<CommentResponseDto>> comments(){
         return ResponseEntity.ok(commentService.getAllComments());
     }
+    @PostMapping("/{id}/like")
+    public String toggleLike(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        boolean liked = commentLikeService.toggleLike(id, userDetails);
+        long total = commentLikeService.getLikesCount(id);
+        commentService.putLike(id);
+        // fuck you
+        return liked ? "👍 Лайк добавлен (" + total + ")" : "👎👎👎 Лайк снят (" + total + ")";
+    }
+
     @GetMapping("/{id}/likes")
     public long getLikesCount(@PathVariable Long id) {
         return commentLikeService.getLikesCount(id);
