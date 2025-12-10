@@ -58,6 +58,7 @@ public class User implements UserDetails {
     private List<Cover> ownedCovers=new ArrayList<>();
 
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Comment> comment;
 
 
