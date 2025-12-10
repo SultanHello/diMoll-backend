@@ -36,6 +36,7 @@ public class CommentController {
         boolean liked = commentLikeService.toggleLike(id, userDetails);
         long total = commentLikeService.getLikesCount(id);
         commentService.putLike(id);
+        // fuck you
         return liked ? "👍 Лайк добавлен (" + total + ")" : "👎👎👎 Лайк снят (" + total + ")";
     }
 
