@@ -36,7 +36,7 @@ public class CommentController {
         boolean liked = commentLikeService.toggleLike(id, userDetails);
         long total = commentLikeService.getLikesCount(id);
         commentService.putLike(id);
-        return liked ? "👍 Лайк добавлен (" + total + ")" : "👎 Лайк снят (" + total + ")";
+        return liked ? "👍 Лайк добавлен (" + total + ")" : "👎👎 Лайк снят (" + total + ")";
     }
 
     @GetMapping("/{id}/likes")
